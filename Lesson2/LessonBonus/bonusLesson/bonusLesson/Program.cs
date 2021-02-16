@@ -26,8 +26,6 @@ namespace bonusLesson
         {
             while (true)
             {
-
-
                 Console.WriteLine("Введите год, чтобы узнать високосный он или нет: ");
                 int year = int.Parse(Console.ReadLine());
 
