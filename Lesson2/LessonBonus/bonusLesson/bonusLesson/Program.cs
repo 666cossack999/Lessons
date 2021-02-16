@@ -4,6 +4,7 @@ namespace bonusLesson
 {
     class Program
     {   
+        //функция проверяющая високосный год или нет, выводит результат в консоль.
         static void LeapYear(int year)
         {
             if (year % 400 == 0)
@@ -26,9 +27,11 @@ namespace bonusLesson
         {
             while (true)
             {
+                //Запрашиваем год у пользователя и присваиваем его переменной year.
                 Console.WriteLine("Введите год, чтобы узнать високосный он или нет: ");
                 int year = int.Parse(Console.ReadLine());
 
+                //Передаём год пользователя в функцию LeapYear
                 LeapYear(year);
             }
         }
