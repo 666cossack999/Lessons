@@ -39,6 +39,13 @@ namespace Lesson3_5
 
             printArray(myArray);
 
+            for (int i = 0; i < myArray.Length; i++)
+            {
+                string beta = myArray[i + n];
+                myArray[i+n] = myArray[i];
+
+            }
+
         }
     }
 }
