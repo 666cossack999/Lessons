@@ -31,7 +31,7 @@ namespace Lesson4_2
                    
                 }
 
-
+                //удаляем строки массива которые содержат "null"
                 array = array.Where(x => x != null).ToArray();
 
                 //возвращаем 
