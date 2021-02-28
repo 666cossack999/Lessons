@@ -4,53 +4,45 @@ namespace Lesson4_3
 {
     class Program
     {
-        public enum Season : int
+        public enum Season //Времена года
         {
-            Winter = 12,
-            Spring = 3,
-            Summer = 6,
-            Autumn = 9
+            None, Winter, Spring, Summer, Autum
         }
         static void Main(string[] args)
         {
-            string userMonth;
-            int n;
-            //Зацикливание программы пока пользователь не введёт цифры
-            do
-            {
-                //Запрашиваем у пользователя номер месяца и сохраняем в переменную userMonth
-                Console.Write("Введите номер месяца: ");
-                userMonth = Console.ReadLine();
+            Season mySeason = Season.None;
+            //Запрашиваем у пользователя номер месяца. 
+            Console.WriteLine("Введите номер месяца: ");
+            int seasonNumber = int.Parse(Console.ReadLine());
 
-            } while (int.TryParse(userMonth, out n) == false);
-            //проверка пользовательских данных.номер месяца должен быть от 1 до 12
-            if (0 < n && n <= 12)
+            switch (seasonNumber)
             {
-                //Вывод сезона
-                if (n <= 2 || n >= 12)
-                {
-                    Console.WriteLine(Season.Winter);
-                }
-                else if (n >= 3 || n <= 5)
-                {
-                    Console.WriteLine(Season.Spring);
-                }
-                else if (n >= 6 || n <= 8)
-                {
-                    Console.WriteLine(Season.Spring);
-                }
-                
-                else if (n >= 9 || n <= 11)
-                {
-                    Console.WriteLine(Season.Autumn);
-                }
-
+                case 1:
+                case 2:
+                case 12:
+                    mySeason = Season.Winter;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                    mySeason = Season.Spring;
+                    break;
+                case 6:
+                case 7:
+                case 8:
+                    mySeason = Season.Summer;
+                    break;
+                case 9:
+                case 10:
+                case 11:
+                    mySeason = Season.Autum;
+                    break;
+                default:
+                    Console.WriteLine("Ошибка: введите число от 1 до 12");
+                    break;
             }
-            else
-            {
-                Console.WriteLine("введите номер месяца от 1 до 12: ");
-
-            }
+            //Выводим Время года соответствующее номеру месяца пользователя
+            Console.WriteLine(mySeason);
         }
     }
 }
