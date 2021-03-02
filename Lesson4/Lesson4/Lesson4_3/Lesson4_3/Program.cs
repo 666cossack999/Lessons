@@ -8,12 +8,17 @@ namespace Lesson4_3
         {
             None, Winter, Spring, Summer, Autum
         }
-        static void Main(string[] args)
+
+       
+        /// <summary>
+        /// Принимает цифру от 1 до 12. Возвращает время года на английском языке
+        /// </summary>
+        /// <param name="seasonNumber"></param>
+        /// <returns></returns>
+        static string userSeason (int seasonNumber)
         {
+
             Season mySeason = Season.None;
-            //Запрашиваем у пользователя номер месяца. 
-            Console.WriteLine("Введите номер месяца: ");
-            int seasonNumber = int.Parse(Console.ReadLine());
 
             switch (seasonNumber)
             {
@@ -41,8 +46,50 @@ namespace Lesson4_3
                     Console.WriteLine("Ошибка: введите число от 1 до 12");
                     break;
             }
+            
+            
+            return mySeason.ToString();
+           
+        }
+        /// <summary>
+        /// Переводит английское время года в русское
+        /// </summary>
+        /// <param name="uSeason"></param>
+        /// <returns></returns>
+        static  string ruSeason (string uSeason)
+        {
+            string rusSeason = null;
+            switch (uSeason)
+            {
+              case "Winter":
+                    rusSeason = "Зима";
+                    break;
+                case "Spring":
+                    rusSeason = "Весна";
+                    break;
+                case "Summer":
+                    rusSeason = "Лето";
+                    break;
+                case "Autum":
+                    rusSeason = "Осень";
+                    break;
+            }
+
+            return rusSeason;
+        }
+
+        static void Main(string[] args)
+        {
+            //Запрашиваем у пользователя номер месяца. 
+            Console.WriteLine("Введите номер месяца: ");
+            int seasonNumber = int.Parse(Console.ReadLine());
+            //передаём число пользователя в функцию которая определит время года
+            string uSeason = userSeason(seasonNumber);
+            //передаём время года в функцию которая переведёт его на русский язык
+            string rusSeason = ruSeason(uSeason);
+
             //Выводим Время года соответствующее номеру месяца пользователя
-            Console.WriteLine(mySeason);
+            Console.WriteLine("Ваш сезон: " + rusSeason);
         }
     }
 }
