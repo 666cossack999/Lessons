@@ -91,8 +91,8 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-.sln
-.csproj
+*.sln
+
 
 # Chutzpah Test files
 _Chutzpah*
@@ -349,3 +349,5 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
+
+Lesson5/Lesson5_1/Lesson5_1/Lesson5.sln
