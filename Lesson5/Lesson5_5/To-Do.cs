@@ -18,7 +18,10 @@ namespace Lesson5_5
 
         public To_Do()
         {
-            IsDone = false;
+            
         }
+
+        
+
     }
 }
