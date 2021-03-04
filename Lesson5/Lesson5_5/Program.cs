@@ -9,7 +9,7 @@ namespace Lesson5_5
     {
         
         private static bool JsonFlag;
-
+        
         /// <summary>
         /// создаёт новый объект класса (новую заметку)
         /// </summary>
@@ -20,6 +20,14 @@ namespace Lesson5_5
             var userTitle = new To_Do();
             userTitle.Title = title;
             userTitle.IsDone = false;
+
+            return userTitle;
+        }
+        static To_Do TitleEdit(string title, bool flag)
+        {
+            var userTitle = new To_Do();
+            userTitle.Title = title;
+            userTitle.IsDone = flag;
 
             return userTitle;
         }
@@ -36,7 +44,7 @@ namespace Lesson5_5
             }
             else
             {
-                File.AppendAllText("To_Do.json", tasks);
+                File.WriteAllText("To_Do.json", tasks);
                 JsonFlag = true;
             }
              
@@ -47,32 +55,29 @@ namespace Lesson5_5
         /// Десериализует файл To_Do.json
         /// </summary>
         /// <returns>двумерный массив с данными из To_Do.json</returns>
-        static string[,] JsonToTitle()
+        static string[] JsonToTitle()
         {
-            int i = 0;                                                  //счётчик для заполнения массива titlesArray
-            string json = File.ReadAllText("To_Do.json");               //путь к файлу json
-            string[] jsonArray = json.Split('|');                       //разбиваем json на массив
-            string[,] titlesArray = new string[jsonArray.Length, 2];    //создаём новый массив где будут храниться сериализованные файлы
+                                                             //счётчик для заполнения массива titlesArray
+            try
+            {
+                int i = 0;
+                string json = File.ReadAllText("To_Do.json");               //путь к файлу json
+                string[] tempArray = json.Split('|');                       //разбиваем json на массив
+                string[] jsonArray = new string[tempArray.Length];
+                foreach (var item in tempArray)
+                {
+                    To_Do task = JsonSerializer.Deserialize<To_Do>(item);
 
-            //заполняем массив titlesArray данными из файла To_Do.json
-            foreach (var item in jsonArray)
-            {                
-                To_Do title = JsonSerializer.Deserialize<To_Do>(item);
-                if (title.IsDone == true)
-                {
-                    titlesArray[i, 0] = "[X]";
-                } else
-                {
-                    titlesArray[i, 0] = "[ ]";
+                    jsonArray[i] = task.IsDone + " " + task.Title;
+                    i++;
                 }
-                                  
-                titlesArray[i, 1 ] = title.Title;
 
-                i++;               
-
+                return jsonArray;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;                
             }
-
-            return titlesArray;
         }
 
         /// <summary>
@@ -83,18 +88,18 @@ namespace Lesson5_5
         /// </summary>
         static void StartProgramm()
         {
+            
             while (true)
             {
-
-                string[,] titlesArray = JsonToTitle();
-
+                //Console.Clear();
                 Console.WriteLine("Введите действие: \n1.Вывести список задач \n2.Добавить задачу \n3.Выход \n");
 
-
+                
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.NumPad1:
                     case ConsoleKey.D1:
+                        string[] titlesArray = JsonToTitle();
                         PrintTasks(titlesArray);
                         break;
 
@@ -121,20 +126,64 @@ namespace Lesson5_5
 
             }
         }
-        static void PrintTasks(string[,] array)
+        static void PrintArray(string[] array)
         {
-            Console.Clear();
-            for (int i = 0; i < array.GetLength(0); i++)
+            for (int i = 0; i < array.Length; i++)
             {
-                Console.Write($"{i+1}: ");
-                for (int j = 0; j < array.GetLength(1); j++)
+                Console.Write($"{i + 1}. ");
+                if (array[i].Split(" ")[0] == "true")
                 {
-                    Console.Write($"{array[i,j]}\t");
+                    Console.Write((array[i].Split(" ")[0] = "[X]\t") + (array[i].Split(" ")[1]));
                 }
+                else
+                {
+                    Console.Write((array[i].Split(" ")[0] = "[ ]\t") + (array[i].Split(" ")[1]));
+                }
+
+
                 Console.WriteLine();
+
             }
-            Console.WriteLine("\n\n");
-            Console.WriteLine("Введите номер задачи которую вы выполнили: ");
+        }
+        static void PrintTasks(string[] array)
+        {
+            int userTasks = 0;
+            int i = 1;
+            if (array != null)
+            {
+                PrintArray(array);
+                
+                Console.WriteLine("Введите номер задачи которую вы выполнили: ");
+
+                userTasks = int.Parse(Console.ReadLine());
+                JsonFlag = false;
+
+                PrintArray(array);                
+
+                foreach (var item in array)
+                {
+                    if (userTasks == i)
+                    {
+                        var title = TitleEdit(item,true);
+                        TitleToJson(title);
+                    }
+                    else
+                    {
+                        var title = TitleEdit(item,false);
+                        TitleToJson(title);
+                    }
+                    
+                }   
+                
+            } 
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("База пуста");                
+            }
+            Console.WriteLine("\n");
+            
+
 
         }
 
@@ -144,9 +193,9 @@ namespace Lesson5_5
             if (File.Exists("To_Do.json"))
             {
                 JsonFlag = true;
-                Console.WriteLine("Найдена база данных!\n");                
-                                                            
+                Console.WriteLine("Найдена база данных!\n");
                 
+
             } else
             {
                 JsonFlag = false;
