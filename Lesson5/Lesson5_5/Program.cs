@@ -26,7 +26,7 @@ namespace Lesson5_5
         static To_Do TitleEdit(string title, bool flag)
         {
             var userTitle = new To_Do();
-            userTitle.Title = title;
+            userTitle.Title = title.Split(" ")[1];
             userTitle.IsDone = flag;
 
             return userTitle;
@@ -131,13 +131,13 @@ namespace Lesson5_5
             for (int i = 0; i < array.Length; i++)
             {
                 Console.Write($"{i + 1}. ");
-                if (array[i].Split(" ")[0] == "true")
+                if (array[i].Split(" ")[0] == "True")
                 {
                     Console.Write((array[i].Split(" ")[0] = "[X]\t") + (array[i].Split(" ")[1]));
                 }
                 else
                 {
-                    Console.Write((array[i].Split(" ")[0] = "[ ]\t") + (array[i].Split(" ")[1]));
+                    Console.Write((array[i].Split(" ")[1] = "[ ]\t") + (array[i].Split(" ")[1]));
                 }
 
 
@@ -145,36 +145,46 @@ namespace Lesson5_5
 
             }
         }
-        static void PrintTasks(string[] array)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="array"></param>
+        static void TasksEdit(string[] array)
         {
             int userTasks = 0;
             int i = 1;
+
+            Console.WriteLine("Введите номер задачи которую вы выполнили: ");
+
+            userTasks = int.Parse(Console.ReadLine());
+            JsonFlag = false;
+
+
+
+            foreach (var item in array)
+            {
+                if (userTasks == i || item.Split(" ")[0] == "True")
+                {
+                    var title = TitleEdit(item, true);
+                    TitleToJson(title);
+                }
+                else
+                {
+                    var title = TitleEdit(item, false);
+                    TitleToJson(title);
+                }
+                i++;
+            }
+            array = JsonToTitle();
+            PrintArray(array);
+        }
+        static void PrintTasks(string[] array)
+        {
+            
             if (array != null)
             {
                 PrintArray(array);
-                
-                Console.WriteLine("Введите номер задачи которую вы выполнили: ");
-
-                userTasks = int.Parse(Console.ReadLine());
-                JsonFlag = false;
-
-                PrintArray(array);                
-
-                foreach (var item in array)
-                {
-                    if (userTasks == i)
-                    {
-                        var title = TitleEdit(item,true);
-                        TitleToJson(title);
-                    }
-                    else
-                    {
-                        var title = TitleEdit(item,false);
-                        TitleToJson(title);
-                    }
-                    
-                }   
-                
+                TasksEdit(array);
             } 
             else
             {
