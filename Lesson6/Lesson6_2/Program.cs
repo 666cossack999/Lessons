@@ -13,7 +13,7 @@ namespace Lesson5_5
         /// <summary>
         /// создаёт новый объект класса (новую заметку)
         /// </summary>
-        /// <param name="title"></param>
+        /// <param name="title">Принимает строку для содания объекта класса</param>
         /// <returns></returns>
         static To_Do NewTitle(string title)
         {
@@ -23,6 +23,12 @@ namespace Lesson5_5
 
             return userTitle;
         }
+        /// <summary>
+        /// Функция изменяет объект класса
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="flag"></param>
+        /// <returns></returns>
         static To_Do TitleEdit(string title, bool flag)
         {
             var userTitle = new To_Do();
@@ -54,7 +60,7 @@ namespace Lesson5_5
         /// <summary>
         /// Десериализует файл To_Do.json
         /// </summary>
-        /// <returns>двумерный массив с данными из To_Do.json</returns>
+        /// <returns>массив с данными из To_Do.json</returns>
         static string[] JsonToTitle()
         {
                                                              //счётчик для заполнения массива titlesArray
@@ -92,7 +98,7 @@ namespace Lesson5_5
             while (true)
             {
                 //Console.Clear();
-                Console.WriteLine("Введите действие: \n1.Вывести список задач \n2.Добавить задачу \n3.Выход \n");
+                Console.WriteLine("Введите действие: \n1.Вывести список задач \n2.Добавить задачу \n3.Удалить выполненые задачи \n4.Выход \n");
 
                 
                 switch (Console.ReadKey(true).Key)
@@ -116,6 +122,11 @@ namespace Lesson5_5
 
                     case ConsoleKey.NumPad3:
                     case ConsoleKey.D3:
+                        TasksRemove();
+                        Console.WriteLine("Выполненые задания удалены.\n");
+                        break;
+                    case ConsoleKey.NumPad4:
+                    case ConsoleKey.D4:
                         Environment.Exit(0);
                         break;
                     default:
@@ -126,6 +137,10 @@ namespace Lesson5_5
 
             }
         }
+        /// <summary>
+        /// Печатает текущий массив
+        /// </summary>
+        /// <param name="array">массив строк</param>
         static void PrintArray(string[] array)
         {
             for (int i = 0; i < array.Length; i++)
@@ -146,24 +161,30 @@ namespace Lesson5_5
             }
         }
         /// <summary>
-        /// 
+        /// Изменение состояния задачи, ставим [X] если выполнили задачу
         /// </summary>
         /// <param name="array"></param>
         static void TasksEdit(string[] array)
         {
-            int userTasks = 0;
-            int i = 1;
+            string userTasks;
+            int n, i = 1;
 
-            Console.WriteLine("Введите номер задачи которую вы выполнили: ");
+            do
+            {
+                Console.WriteLine("Введите номер задачи которую вы выполнили\nили любую другую цифру для выхода в меню: ");
 
-            userTasks = int.Parse(Console.ReadLine());
-            JsonFlag = false;
+                userTasks = Console.ReadLine();
+                JsonFlag = false;
+            } while (int.TryParse(userTasks, out n) == false);
+            
+
+            
 
 
 
             foreach (var item in array)
             {
-                if (userTasks == i || item.Split(" ")[0] == "True")
+                if (n == i || item.Split(" ")[0] == "True")
                 {
                     var title = TitleEdit(item, true);
                     TitleToJson(title);
@@ -178,6 +199,10 @@ namespace Lesson5_5
             array = JsonToTitle();
             PrintArray(array);
         }
+        /// <summary>
+        /// Выводит на консоль текущее состояние задач.
+        /// </summary>
+        /// <param name="array"></param>
         static void PrintTasks(string[] array)
         {
             
@@ -196,7 +221,34 @@ namespace Lesson5_5
 
 
         }
+        
+        /// <summary>
+        /// Удаляет выполненые задачи
+        /// </summary>
+        static void TasksRemove()
+        {
+            
+            string[] array = JsonToTitle();
+            File.WriteAllText("To_Do.json", " ");
+            JsonFlag = false;
+            
 
+            foreach (var item in array)
+            {
+                if (item.Split(" ")[0] == "False")
+                {
+                    var userTitle = new To_Do();
+                    userTitle.Title = item.Split(" ")[1];
+                    userTitle.IsDone = Convert.ToBoolean(item.Split(" ")[0]);
+                    TitleToJson(userTitle);
+                }
+                else
+                {
+                    continue;
+                }
+                
+            }
+        }
         static void Main(string[] args)
         {
             
