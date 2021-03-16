@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+
 namespace Level_1.Lesson_7
 {
     class Cross
@@ -10,7 +11,9 @@ namespace Level_1.Lesson_7
         static int SIZE_Y = 5;
         static int WIN_SQUARE = 4;  //чило последовательности символов для победы
 
-        static char[,] field = new char[SIZE_Y, SIZE_X];
+        
+        static char[,] field = new char[SIZE_Y, SIZE_X]; //Игровое поле
+
 
         static char PLAYER_DOT = 'X';
         static char AI_DOT = 'O';
@@ -32,7 +35,7 @@ namespace Level_1.Lesson_7
         private static void PrintField()
         {
             Console.Clear();
-            Console.WriteLine("-------");
+            Console.WriteLine("--------------");
             for (int i = 0; i < SIZE_Y; i++)
             {
                 Console.Write("|");
@@ -42,7 +45,7 @@ namespace Level_1.Lesson_7
                 }
                 Console.WriteLine();
             }
-            Console.WriteLine("-------");
+            Console.WriteLine("--------------");
         }
 
         private static void SetSym(int y, int x, char sym)
@@ -90,8 +93,48 @@ namespace Level_1.Lesson_7
 
         private static void AiStep()
         {
+
+
             int x;
             int y;
+            //блокировка ходов человека
+            for (int v = 0; v < SIZE_Y; v++)
+            {
+                for (int h = 0; h < SIZE_X; h++)
+                {
+                    //анализ наличие поля для проверки
+                    if (h + WIN_SQUARE <= SIZE_X)
+                    {                           //по горизонтале
+                        if (CheckLineHorisont(v, h, PLAYER_DOT) == WIN_SQUARE - 1)
+                        {
+                            if (MoveAiLineHorisont(v, h, AI_DOT)) return;
+                        }
+
+                        if (v - WIN_SQUARE > -2)
+                        {                            //вверх по диагонале
+                            if (CheckDiaUp(v, h, PLAYER_DOT) == WIN_SQUARE - 1)
+                            {
+                                if (MoveAiDiaUp(v, h, AI_DOT)) return;
+                            }
+                        }
+                        if (v + WIN_SQUARE <= SIZE_Y)
+                        {                       //вниз по диагонале
+                            if (CheckDiaDown(v, h, PLAYER_DOT) == WIN_SQUARE - 1)
+                            {
+                                if (MoveAiDiaDown(v, h, AI_DOT)) return;
+                            }
+                        }
+                    }
+                    if (v + WIN_SQUARE <= SIZE_Y)
+                    {                       //по вертикале
+                        if (CheckLineVertical(v, h, PLAYER_DOT) == WIN_SQUARE - 1)
+                        {
+                            if (MoveAiLineVertical(v, h, AI_DOT)) return;
+                        }
+                    }
+                }
+            }
+
             do
             {
                 x = random.Next(0, SIZE_X);
@@ -100,57 +143,129 @@ namespace Level_1.Lesson_7
             SetSym(y, x, AI_DOT);
         }
 
-       
-        /// <summary>
-        /// Проверяет диагонали на победу
-        /// </summary>
-        /// <param name="sym">символ игрока</param>
-        /// <returns>true/false</returns>
-        private static bool CheckDiagonal(char sym,int offsetX, int offsetY)
+        //ход компьютера по горизонтале
+        private static bool MoveAiLineHorisont(int v, int h, char sym)
         {
-            bool toRight, toLeft;
-            toRight = true;
-            toLeft = true;
-            for (int i = offsetX; i < WIN_SQUARE; i++)
+            for (int j = h; j < WIN_SQUARE; j++)
             {
-                
-
-                    toRight &= field[i, i+offsetY] == sym;
-                    toLeft &= field[ i+offsetY, WIN_SQUARE - i - 1] == sym;
-                
-                
-                
-            }
-
-            return (toRight || toLeft);
-
-            
-        }
-        /// <summary>
-        /// Проверяем горизонтальные и вертикальные линии на победу
-        /// </summary>
-        /// <param name="sym">символ игрока</param>
-        /// <param name="offsetX">смещение по Х</param>
-        /// <param name="offsetY">смещение по Y</param>
-        /// <returns>true/false</returns>
-        private static bool CheckLanes(char sym,int offsetX, int offsetY)
-        {
-            bool columns, rows;
-            for (int col = offsetX; col < WIN_SQUARE+offsetX; col++)
-            {
-                columns = true;
-                rows = true;
-                
-                for (int row = offsetY; row < WIN_SQUARE+offsetY; row++)
+                if ((field[v, j] == EMPTY_DOT))
                 {
-                    columns &= field[col, row] == sym;
-                    rows &= field[row, col] == sym;
+                    field[v, j] = sym;
+                    return true;
                 }
-                //Если столбец или строка true - останавливаем дальнейшее выполнение
-                if (columns || rows) return true;
-                
             }
             return false;
+        }
+       
+        //ход компьютера по вертикале
+        private static bool MoveAiLineVertical(int v, int h, char sym)
+        {
+            for (int i = v; i < WIN_SQUARE; i++)
+            {
+                if ((field[i, h] == EMPTY_DOT))
+                {
+                    field[i, h] = sym;
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        //проверка заполнения всей линии по диагонале вверх
+        private static bool MoveAiDiaUp(int v, int h, char sym)
+        {
+            for (int i = 0, j = 0; j < WIN_SQUARE; i--, j++)
+            {
+                if ((field[v + i, h + j] == EMPTY_DOT))
+                {
+                    field[v + i, h + j] = sym;
+                    return true;
+                }
+            }
+            return false;
+        }
+       
+        //проверка заполнения всей линии по диагонале вниз
+        private static bool MoveAiDiaDown(int v, int h, char sym)
+        {
+
+            for (int i = 0; i < WIN_SQUARE; i++)
+            {
+                if ((field[i + v, i + h] == EMPTY_DOT))
+                {
+                    field[i + v, i + h] = sym;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        /// <summary>
+        /// Проверка заполнения всей линии по горизонтали
+        /// </summary>
+        /// <param name="v">X</param>
+        /// <param name="h">Y</param>
+        /// <param name="dot">Символ</param>
+        /// <returns>Кол-во символов в строке</returns>
+        private static int CheckLineHorisont(int v, int h, char dot)
+        {
+            int count = 0;
+            for (int j = h; j < WIN_SQUARE + h; j++)
+            {
+                if ((field[v, j] == dot)) count++;
+            }
+            return count;
+        }
+        /// <summary>
+        /// проверка заполнения всей линии по диагонале вверх
+        /// </summary>
+        /// <param name="v">X</param>
+        /// <param name="h">Y</param>
+        /// <param name="dot">Символ</param>
+        /// <returns>Кол-во символов в диагонали справа налево</returns>
+        private static int CheckDiaUp(int v, int h, char dot)
+        {
+            int count = 0;
+            for (int i = 0, j = 0; j < WIN_SQUARE; i--, j++)
+            {
+                if ((field[v + i, h + j] == dot)) count++;
+            }
+            return count;
+        }
+   
+        /// <summary>
+        /// проверка заполнения всей линии по диагонале вниз
+        /// </summary>
+        /// <param name="v">X</param>
+        /// <param name="h">Y</param>
+        /// <param name="dot">Символ</param>
+        /// <returns>Кол-во символов в диагонали слева направо</returns>
+        private static int CheckDiaDown(int v, int h, char dot)
+        {
+            int count = 0;
+            for (int i = 0; i < WIN_SQUARE; i++)
+            {
+                if ((field[i + v, i + h] == dot)) count++;
+            }
+            return count;
+        }
+        /// <summary>
+        /// Проверка заполнения всей линии по вертикали
+        /// </summary>
+        /// <param name="v">X</param>
+        /// <param name="h">Y</param>
+        /// <param name="dot">Символ</param>
+        /// <returns>Кол-во символов в столбце</returns>
+        private static int CheckLineVertical(int v, int h, char dot)
+        {
+            int count = 0;
+            for (int i = v; i < WIN_SQUARE + v; i++)
+            {
+                if ((field[i, h] == dot)) count++;
+            }
+            return count;
         }
 
         /// <summary>
@@ -160,19 +275,38 @@ namespace Level_1.Lesson_7
         /// <returns>true/false</returns>
         private static bool CheckWin(char sym)
         {
-            
-            for (int col = 0; col <= (SIZE_X - WIN_SQUARE); col++)
+            for (int v = 0; v < SIZE_Y; v++)
             {
-                for (int row = 0; row <= (SIZE_X - WIN_SQUARE); row++)
+                for (int h = 0; h < SIZE_X; h++)
                 {
-                    bool diag = CheckDiagonal(sym, col, row);
-                    bool lanes = CheckLanes(sym, col, row);
-                    if (diag || lanes) return true;
+                    //анализ наличие поля для проверки
+                    if (h + WIN_SQUARE <= SIZE_X)
+                    {                           //по горизонтале
+                        if (CheckLineHorisont(v, h, sym) >= WIN_SQUARE) return true;
+
+                        if (v - WIN_SQUARE > -2)
+                        {                            //вверх по диагонале
+                            if (CheckDiaUp(v, h, sym) >= WIN_SQUARE) return true;
+                        }
+                        if (v + WIN_SQUARE <= SIZE_Y)
+                        {                       //вниз по диагонале
+                            if (CheckDiaDown(v, h, sym) >= WIN_SQUARE) return true;
+                        }
+                    }
+                    if (v + WIN_SQUARE <= SIZE_Y)
+                    {                       //по вертикале
+                        if (CheckLineVertical(v, h, sym) >= WIN_SQUARE) return true;
+                    }
                 }
             }
-           
             return false;
+
         }
+
+
+
+
+
 
         static void Main(string[] args)
         {
